@@ -192,17 +192,16 @@ class ClassifiersGallery(object):
     y = []
     
     
-    def gen_gallery(self, sizes):
+    def gen_gallery(self, sizes, n_gram=None, hash_features=None):
         
         self.sizes = sizes
-        t = time.strftime("%d-%m|%h:%M")
+        t = time.strftime("%d-%m|%H:%M")
         
         fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
         del_char = "|"
         limit = 1000000
         col_desc = 0
         col_cat = ["AREA_INTERVENTO", 'SETTORE_INTERVENTO', 'SOTTOSETTORE_INTERVENTO', 'CATEGORIA_INTERVENTO']
-        n_gram = (1, 2)  # None
         
         data_utils = DataUtils()
         
@@ -218,7 +217,7 @@ class ClassifiersGallery(object):
             X, targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
             print('Done')
             
-            classifier.train(X, targets, n_gram,hash_features=5000)
+            classifier.train(X, targets, n_gram=n_gram, hash_features=hash_features)
         
         n_gram = classifier.get_n_gram()
         if n_gram != None:
@@ -280,7 +279,9 @@ class ClassifiersGallery(object):
         
 clf_g = ClassifiersGallery()
 
-clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000])
+n_gram = (1, 2)
+hash_features=50000
+clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000],n_gram=n_gram,hash_features=hash_features)
 
      
         
