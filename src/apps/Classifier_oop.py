@@ -42,6 +42,9 @@ class Classifier(object):
     
     def get_accuracies(self):
         return self.accuracies
+    
+    def get_n_gram(self):
+        return self.n_gram
 
 
     _path = "/home/alejandro/model/"
@@ -50,6 +53,7 @@ class Classifier(object):
     count_vect_cat = None
     tfidf_transformer = None
     accuracies = []
+    n_gram = None
     
     
 
@@ -78,7 +82,9 @@ class Classifier(object):
                 self.count_vect = CountVectorizer(ngram_range = self.n_gram)
                 self.count_vect_cat = CountVectorizer(ngram_range = self.n_gram)
             
+            t_start_vect = time.time()    
             self.tfidf_transformer = TfidfTransformer(use_idf=False)
+            print(str(round(time.time() - t_start_vect, 3)) + "s for Vectorization with " + type(self.count_vect).__name__)
             
             models.append(MultinomialNB(alpha=0.001))
             models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
@@ -185,7 +191,7 @@ class ClassifiersGallery(object):
     def gen_gallery(self, sizes):
         
         self.sizes = sizes
-        t = time.strftime("%c")
+        t = time.strftime("%d-%m-%y|%X")
         
         fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
         del_char = "|"
@@ -209,6 +215,12 @@ class ClassifiersGallery(object):
             print('Done')
             
             classifier.train(X, targets, n_gram)
+        
+        n_gram = classifier.get_n_gram()
+        if n_gram!=None:
+            ng = "|Ngram"+str(n_gram)
+        else:
+            ng = ''
         for cat in col_cat:
             self.clf_hist = defaultdict(list)
             for accuracy in classifier.get_accuracies():       
@@ -226,7 +238,8 @@ class ClassifiersGallery(object):
                 ax.set_ylim((0.5, 1))
             plt.legend(clf_names, loc='best')
             
-            directory = '/home/alejandro/OpenCup_plots/' #+t
+            
+            directory = '/home/alejandro/OpenCup_plots/' +t+ng
             if not os.path.exists(directory):
                 os.makedirs(directory)
                 
@@ -254,9 +267,9 @@ class ClassifiersGallery(object):
     
         
         
-clf_g = ClassifiersGallery()
+#clf_g = ClassifiersGallery()
 
-clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000])
+#clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000])
 
      
         
