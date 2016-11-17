@@ -182,7 +182,7 @@ class ClassifiersGallery(object):
     y = []
     
     
-    def init(self, sizes):
+    def gen_gallery(self, sizes):
         
         self.sizes = sizes
         t = time.strftime("%c")
@@ -212,7 +212,7 @@ class ClassifiersGallery(object):
         for cat in col_cat:
             self.clf_hist = defaultdict(list)
             for accuracy in classifier.get_accuracies():       
-                self.bo(accuracy, cat)
+                self.makeClfHist(accuracy, cat)
             
             clf_names = list(sorted(self.clf_hist.keys()))
             
@@ -233,7 +233,7 @@ class ClassifiersGallery(object):
             plt.savefig(directory + "/"+ cat + '.png')
             plt.show()
         
-    def bo(self, accuracies, label):
+    def makeClfHist(self, accuracies, label):
         
         for clf, acc in accuracies[label].items():
             self.clf_hist[clf].append(acc)
@@ -256,7 +256,7 @@ class ClassifiersGallery(object):
         
 clf_g = ClassifiersGallery()
 
-clf_g.init([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000])
+clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000])
 
      
         
