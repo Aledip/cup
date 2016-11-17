@@ -45,6 +45,9 @@ class Classifier(object):
     
     def get_n_gram(self):
         return self.n_gram
+    
+    def get_hash_features(self):
+        return self.hash_features
 
 
     _path = "/home/alejandro/model/"
@@ -54,6 +57,7 @@ class Classifier(object):
     tfidf_transformer = None
     accuracies = []
     n_gram = None
+    hash_features = None
     
     
 
@@ -64,6 +68,7 @@ class Classifier(object):
     def train(self, X, targets, n_gram=None, hash_features=None):
         
         self.n_gram = n_gram
+        self.hash_features = hash_features
         dict1 = OrderedDict()
         for label in targets:
             models = []
@@ -76,15 +81,13 @@ class Classifier(object):
                         
             
             if(hash_features != None):
-                self.count_vect = HashingVectorizer(non_negative=True, n_features=hash_features,ngram_range = self.n_gram)
-                self.count_vect_cat = HashingVectorizer(non_negative=True, n_features=hash_features,ngram_range = self.n_gram)
+                self.count_vect = HashingVectorizer(non_negative=True, n_features=self.hash_features, ngram_range=self.n_gram)
+                self.count_vect_cat = HashingVectorizer(non_negative=True, n_features=self.hash_features, ngram_range=self.n_gram)
             else:
-                self.count_vect = CountVectorizer(ngram_range = self.n_gram)
-                self.count_vect_cat = CountVectorizer(ngram_range = self.n_gram)
-            
-            t_start_vect = time.time()    
+                self.count_vect = CountVectorizer(ngram_range=self.n_gram)
+                self.count_vect_cat = CountVectorizer(ngram_range=self.n_gram)
+             
             self.tfidf_transformer = TfidfTransformer(use_idf=False)
-            print(str(round(time.time() - t_start_vect, 3)) + "s for Vectorization with " + type(self.count_vect).__name__)
             
             models.append(MultinomialNB(alpha=0.001))
             models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
@@ -96,8 +99,9 @@ class Classifier(object):
             # models.append( VotingClassifier(estimators=[('NB', models[0]), ('RF', models[4]), ('LR', models[5])], voting='soft', weights=[2,2,1]) )
             # models.append(GridSearchCV(estimator=models['NB'], param_grid=params, cv=5))
             
-            
+            t_start_vect = time.time()   
             X_train_tfidf = self._prepare_matrix(X_train)
+            print(str(round(time.time() - t_start_vect, 3)) + "s for Vectorization with " + type(self.count_vect).__name__ + "\n")
             
             for m in models:
                 t_start = time.time()
@@ -191,7 +195,7 @@ class ClassifiersGallery(object):
     def gen_gallery(self, sizes):
         
         self.sizes = sizes
-        t = time.strftime("%d-%m-%y|%X")
+        t = time.strftime("%d-%m|%h:%M")
         
         fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
         del_char = "|"
@@ -214,13 +218,20 @@ class ClassifiersGallery(object):
             X, targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
             print('Done')
             
-            classifier.train(X, targets, n_gram)
+            classifier.train(X, targets, n_gram,hash_features=5000)
         
         n_gram = classifier.get_n_gram()
-        if n_gram!=None:
-            ng = "|Ngram"+str(n_gram)
+        if n_gram != None:
+            ng = "|Ngram" + str(n_gram)
         else:
             ng = ''
+            
+        hash_features = classifier.get_hash_features()
+        if hash_features != None:
+            hf = "|HashVectorizer(" + str(hash_features) + ")"
+        else:
+            hf = ""
+            
         for cat in col_cat:
             self.clf_hist = defaultdict(list)
             for accuracy in classifier.get_accuracies():       
@@ -239,11 +250,11 @@ class ClassifiersGallery(object):
             plt.legend(clf_names, loc='best')
             
             
-            directory = '/home/alejandro/OpenCup_plots/' +t+ng
+            directory = '/home/alejandro/OpenCup_plots/' + t + ng + hf
             if not os.path.exists(directory):
                 os.makedirs(directory)
                 
-            plt.savefig(directory + "/"+ cat + '.png')
+            plt.savefig(directory + "/" + cat + '.png')
             plt.show()
         
     def makeClfHist(self, accuracies, label):
@@ -267,9 +278,9 @@ class ClassifiersGallery(object):
     
         
         
-#clf_g = ClassifiersGallery()
+clf_g = ClassifiersGallery()
 
-#clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000])
+clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000])
 
      
         
