@@ -68,7 +68,7 @@ class Classifier(object):
         for label in targets:
             models = []
             
-            print('\ngeneratin training_set for ' + label + '..')
+            print('\ngenerating training_set for ' + label + '..')
             X_train, X_test, y_train, y_test = train_test_split(X, targets[label], train_size=0.70, random_state=42)
             print('Done\n')
             
@@ -88,7 +88,7 @@ class Classifier(object):
             models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
             models.append(SGDClassifier(loss='perceptron', alpha=0.001, n_iter=100, n_jobs=-1))
             models.append(Perceptron(alpha=0.001, n_iter=100, n_jobs=-1, random_state=1))
-            models.append(RandomForestClassifier(n_estimators=20, n_jobs=-1))
+            #models.append(RandomForestClassifier(n_estimators=20, n_jobs=-1))
     
             # self.models['AB'] = AdaBoostClassifier(base_estimator=self.models['NB'], n_estimators=100)
             # models.append( VotingClassifier(estimators=[('NB', models[0]), ('RF', models[4]), ('LR', models[5])], voting='soft', weights=[2,2,1]) )
