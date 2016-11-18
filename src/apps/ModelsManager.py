@@ -60,11 +60,6 @@ class Classifier(object):
     hash_features = None
     
     
-
-    
-    
-        
-  
     def train(self, X, targets, n_gram=None, hash_features=None):
         
         self.n_gram = n_gram
