@@ -278,11 +278,11 @@ class ClassifiersGallery(object):
     
         
         
-clf_g = ClassifiersGallery()
+#clf_g = ClassifiersGallery()
 
 n_gram = (1, 2)
 hash_features = 50000
-clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000], n_gram=n_gram)
+#clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000], n_gram=n_gram)
 
      
         
