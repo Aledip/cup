@@ -7,7 +7,7 @@ Created on 07 ott 2016
 import collections
 
 import pandas as pd
-from utils.TextUtils_oop import TextUtils
+from utils.TextUtils import TextUtils
 
 
 class DataUtils(object):
