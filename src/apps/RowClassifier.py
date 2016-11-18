@@ -9,8 +9,8 @@ from builtins import IOError
 import traceback
 
 from apps.ModelsManager import Classifier
-from utils.DataUtils_oop import DataUtils
-from utils.TextUtils_oop import TextUtils
+from utils.DataUtils import DataUtils
+from utils.TextUtils import TextUtils
 
 
 fname = '/home/alejandro/Documenti/training_set.csv'#'/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 

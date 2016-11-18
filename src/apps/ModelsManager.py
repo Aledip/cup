@@ -21,7 +21,7 @@ from sklearn.naive_bayes import MultinomialNB
 
 import matplotlib.pyplot as plt
 import numpy as np
-from utils.DataUtils_oop import DataUtils
+from utils.DataUtils import DataUtils
 
 
 class Accuracy(object):
