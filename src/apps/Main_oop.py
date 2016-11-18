@@ -8,7 +8,7 @@ Created on 07 ott 2016
 from builtins import IOError
 import traceback
 
-from apps.Classifier_oop import Classifier
+from apps.ModelManager import Classifier
 from utils.DataUtils_oop import DataUtils
 from utils.TextUtils_oop import TextUtils
 

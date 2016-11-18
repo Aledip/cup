@@ -1,4 +1,4 @@
 eclipse.preferences.version=1
-encoding//src/Services/HelloFlask.py=utf-8
+encoding//src/Services/Service.py=utf-8
 encoding//src/apps/Main_oop.py=utf-8
-encoding//src/apps/ModelManager.py=utf-8
+encoding//src/apps/ModelsManager.py=utf-8
