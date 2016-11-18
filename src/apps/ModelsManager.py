@@ -50,7 +50,7 @@ class Classifier(object):
         return self.hash_features
 
 
-    _path = "/home/alejandro/model/"
+    _path = "/home/alejandro/models/"
     labels = dict()
     count_vect = None
     count_vect_cat = None
@@ -124,17 +124,23 @@ class Classifier(object):
         
         
     def save(self):
-        name = "modelli_addestrati"
-        print ("save models")
-        joblib.dump([self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer], "/home/alejandro/model/modelli_addestrati.pkl", compress=3)
         
+        name = "modelli_addestrati.pkl"
+        print ("saving models...")
+        t_start_vect = time.time() 
+        joblib.dump([self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer], self._path + name, compress=3)
+        print(str(round(time.time() - t_start_vect, 3)) + "s for save models")
+        print("Done")
         
       
     def load(self):
         
         name = "modelli_addestrati.pkl"
+        print("loading models...")
+        t_start_vect = time.time()
         self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer = joblib.load(self._path + name)
-        print("loaded models")
+        print(str(round(time.time() - t_start_vect, 3)) + "s for load models")
+        print("Done")
      
     def get_accuracy(self, X_test, y_test, label):
         accuracies = dict()
@@ -275,8 +281,8 @@ class ClassifiersGallery(object):
 clf_g = ClassifiersGallery()
 
 n_gram = (1, 2)
-hash_features=50000
-clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000],n_gram=n_gram,hash_features=hash_features)
+hash_features = 50000
+clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000], n_gram=n_gram)
 
      
         

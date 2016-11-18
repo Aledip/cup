@@ -8,7 +8,7 @@ Created on 07 ott 2016
 from builtins import IOError
 import traceback
 
-from apps.ModelManager import Classifier
+from apps.ModelsManager import Classifier
 from utils.DataUtils_oop import DataUtils
 from utils.TextUtils_oop import TextUtils
 
@@ -30,11 +30,8 @@ df = data_utils.csvReader(fname, limit, del_char)
 print('Done')
 
 print('sampling data..')
-lista = data_utils.gen_XandY(df, campione, col_desc, col_cat)
+X,cat_targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
 print('Done')
-
-X = lista[0]
-targets = lista[1]
 
 classifier = Classifier()
     
@@ -44,12 +41,12 @@ try:
 except (OSError, IOError) as e:
     #traceback.print_exc()
     print('models training..')
-    classifier.train(X,targets,n_gram)
+    classifier.train(X,cat_targets,n_gram)
     classifier.save()
     
 s = input('>>')
 
-for label in targets:
+for label in cat_targets.keys():
       
     print('\nfor '+label+' classified like:\n')
     
