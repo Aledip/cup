@@ -50,7 +50,7 @@ class Classifier(object):
         return self.hash_features
 
 
-    _path = "/home/alejandro/models/"
+    path = "/home/alejandro/models/"
     labels = dict()
     count_vect = None
     count_vect_cat = None
@@ -88,7 +88,7 @@ class Classifier(object):
             models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
             models.append(SGDClassifier(loss='perceptron', alpha=0.001, n_iter=100, n_jobs=-1))
             models.append(Perceptron(alpha=0.001, n_iter=100, n_jobs=-1, random_state=1))
-            #models.append(RandomForestClassifier(n_estimators=20, n_jobs=-1))
+            models.append(RandomForestClassifier(n_estimators=20, n_jobs=-1))
     
             # self.models['AB'] = AdaBoostClassifier(base_estimator=self.models['NB'], n_estimators=100)
             # models.append( VotingClassifier(estimators=[('NB', models[0]), ('RF', models[4]), ('LR', models[5])], voting='soft', weights=[2,2,1]) )
@@ -125,10 +125,12 @@ class Classifier(object):
         
     def save(self):
         
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
         name = "modelli_addestrati.pkl"
         print ("saving models...")
         t_start_vect = time.time() 
-        joblib.dump([self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer], self._path + name, compress=3)
+        joblib.dump([self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer], self.path + name, compress=3)
         print(str(round(time.time() - t_start_vect, 3)) + "s for save models")
         print("Done")
         
@@ -138,7 +140,7 @@ class Classifier(object):
         name = "modelli_addestrati.pkl"
         print("loading models...")
         t_start_vect = time.time()
-        self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer = joblib.load(self._path + name)
+        self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer = joblib.load(self.path + name)
         print(str(round(time.time() - t_start_vect, 3)) + "s for load models")
         print("Done")
      

@@ -37,7 +37,6 @@ classifier = Classifier()
     
 try:
     classifier.load()
-    raise OSError
 except (OSError, IOError) as e:
     #traceback.print_exc()
     print('models training..')
