@@ -88,7 +88,7 @@ class Classifier(object):
             models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
             models.append(SGDClassifier(loss='perceptron', alpha=0.001, n_iter=100, n_jobs=-1))
             models.append(Perceptron(alpha=0.001, n_iter=100, n_jobs=-1, random_state=1))
-            models.append(RandomForestClassifier(n_estimators=20, n_jobs=-1))
+            models.append(RandomForestClassifier(n_estimators=10, n_jobs=-1))
     
             # self.models['AB'] = AdaBoostClassifier(base_estimator=self.models['NB'], n_estimators=100)
             # models.append( VotingClassifier(estimators=[('NB', models[0]), ('RF', models[4]), ('LR', models[5])], voting='soft', weights=[2,2,1]) )
@@ -138,9 +138,9 @@ class Classifier(object):
     def load(self):
         
         name = "modelli_addestrati.pkl"
+        print("loading models...")
         t_start_vect = time.time()
         self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer = joblib.load(self.path + name)
-        print("loading models...")
         print(str(round(time.time() - t_start_vect, 3)) + "s for load models")
         print("Done")
      
