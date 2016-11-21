@@ -13,44 +13,47 @@ from utils.DataUtils import DataUtils
 from utils.TextUtils import TextUtils
 
 
-fname = '/home/alejandro/Documenti/training_set.csv'#'/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
+fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
 del_char = "|"
 limit = 1000000
 fnameNonVisionati = '/home/alejandro/Documenti/NON_VISIONATI.csv'
-campione = 169750
+campione = 50000 #169750
 col_desc = 0
-col_cat = ["AREA_INTERVENTO",'SETTORE_INTERVENTO','SOTTOSETTORE_INTERVENTO','CATEGORIA_INTERVENTO']
-n_gram = (1, 2) #None
+col_cat = ["AREA_INTERVENTO", 'SETTORE_INTERVENTO', 'SOTTOSETTORE_INTERVENTO', 'CATEGORIA_INTERVENTO']
+n_gram = (1, 2)  # None
 
 data_utils = DataUtils()
 text_utils = TextUtils()
 
-print('loading data..')
-df = data_utils.csvReader(fname, limit, del_char)
-print('Done')
 
-print('sampling data..')
-X,cat_targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
-print('Done')
 
 classifier = Classifier()
     
 try:
     classifier.load()
 except (OSError, IOError) as e:
+    
+    print('loading data..')
+    df = data_utils.csvReader(fname, limit, del_char)
+    print('Done')
+    
+    print('sampling data..')
+    X, cat_targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
+    print('Done')
+
     #traceback.print_exc()
     print('models training..')
-    classifier.train(X,cat_targets,n_gram)
+    classifier.train(X, cat_targets, n_gram)
     classifier.save()
     
 s = input('>>')
 
-for label in cat_targets.keys():
+for label in col_cat:
       
-    print('\nfor '+label+' classified like:\n')
+    print('\nfor ' + label + ' classified like:\n')
     
-    for k,v in classifier.classify([s], label).items():
-        print(k+" --> "+v)
+    for k, v in classifier.classify([s], label).items():
+        print(k + " --> " + v)
     
 
 

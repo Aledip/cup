@@ -138,9 +138,9 @@ class Classifier(object):
     def load(self):
         
         name = "modelli_addestrati.pkl"
-        print("loading models...")
         t_start_vect = time.time()
         self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer = joblib.load(self.path + name)
+        print("loading models...")
         print(str(round(time.time() - t_start_vect, 3)) + "s for load models")
         print("Done")
      
@@ -280,11 +280,11 @@ class ClassifiersGallery(object):
     
         
         
-#clf_g = ClassifiersGallery()
+# clf_g = ClassifiersGallery()
 
 n_gram = (1, 2)
 hash_features = 50000
-#clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000], n_gram=n_gram)
+# clf_g.gen_gallery([2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000], n_gram=n_gram)
 
      
         

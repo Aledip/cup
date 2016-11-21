@@ -29,7 +29,7 @@ class DataUtils(object):
         #  natura intervento 34 - tipologia_intervento 36 - area_intervento 37 - settore_intervento 39 - sottosettore_intervento 41 - categoria_intervento 43
         y_dict = collections.OrderedDict()
         for y_column in y_columns:
-            y_dict[y_column] = sample.loc[:,y_column] #[as_matrix()[:,y_column] # .tolist()
+            y_dict[y_column] = sample.loc[:,y_column]
 
         X = TextUtils().norm_str_array(X)
         
