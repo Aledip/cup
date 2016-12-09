@@ -22,18 +22,6 @@ from sklearn.naive_bayes import MultinomialNB
 import matplotlib.pyplot as plt
 import numpy as np
 from utils.DataUtils import DataUtils
-
-
-class Accuracy(object):
-    
-    label = ''
-    clf = ''
-    accuracies = []
-        
-    def __init__(self, label, clf, accuracies):
-        self.label = label
-        self.clf = clf
-        self.accuracies = accuracies
     
 class Classifier(object):
         
@@ -50,8 +38,9 @@ class Classifier(object):
         return self.hash_features
 
 
-    path = "/home/alejandro/models/"
+    path = "/home/alejandro/modelsExample/"
     labels = dict()
+    vectorizer = None
     count_vect = None
     count_vect_cat = None
     tfidf_transformer = None
@@ -59,36 +48,43 @@ class Classifier(object):
     n_gram = None
     hash_features = None
     
+    def __init__(self,Vect):
+        self.vectorizer = Vect
+        self.fvectorizer = Vect
     
-    def train(self, X, targets, n_gram=None, hash_features=None):
+    
+    
+    def train(self, X, targets):
         
-        self.n_gram = n_gram
-        self.hash_features = hash_features
+        
         dict1 = OrderedDict()
-        for label in targets:
+
+        for label in targets.keys():
+            print("#########################################################")
+            print("\n"+label+"\n")
             models = []
             
-            print('\ngenerating training_set for ' + label + '..')
             X_train, X_test, y_train, y_test = train_test_split(X, targets[label], train_size=0.70, random_state=42)
-            print('Done\n')
             
             params = {'alpha': [0.01, 0.001 , 0.0001], }
                         
             
-            if(hash_features != None):
-                self.count_vect = HashingVectorizer(non_negative=True, n_features=self.hash_features, ngram_range=self.n_gram)
-                self.count_vect_cat = HashingVectorizer(non_negative=True, n_features=self.hash_features, ngram_range=self.n_gram)
-            else:
-                self.count_vect = CountVectorizer(ngram_range=self.n_gram)
-                self.count_vect_cat = CountVectorizer(ngram_range=self.n_gram)
+            #===================================================================
+            # if(hash_features != None):
+            #     self.count_vect = HashingVectorizer(non_negative=True, n_features=self.hash_features, ngram_range=self.n_gram)
+            #     self.count_vect_cat = HashingVectorizer(non_negative=True, n_features=self.hash_features, ngram_range=self.n_gram)
+            # else:
+            #     self.count_vect = CountVectorizer(ngram_range=self.n_gram)
+            #     self.count_vect_cat = CountVectorizer(ngram_range=self.n_gram)
+            #===================================================================
              
-            self.tfidf_transformer = TfidfTransformer(use_idf=False)
+            #self.tfidf_transformer = TfidfTransformer(use_idf=False)
             
-            models.append(MultinomialNB(alpha=0.001))
+            # models.append(MultinomialNB(alpha=0.001))
             models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
-            models.append(SGDClassifier(loss='perceptron', alpha=0.001, n_iter=100, n_jobs=-1))
-            models.append(Perceptron(alpha=0.001, n_iter=100, n_jobs=-1, random_state=1))
-            models.append(RandomForestClassifier(n_estimators=10, n_jobs=-1))
+            # models.append(SGDClassifier(loss='perceptron', alpha=0.001, n_iter=100, n_jobs=-1))
+            # models.append(Perceptron(alpha=0.001, n_iter=100, n_jobs=-1, random_state=1))
+            #- models.append(RandomForestClassifier(n_estimators=10, n_jobs=-1))
     
             # self.models['AB'] = AdaBoostClassifier(base_estimator=self.models['NB'], n_estimators=100)
             # models.append( VotingClassifier(estimators=[('NB', models[0]), ('RF', models[4]), ('LR', models[5])], voting='soft', weights=[2,2,1]) )
@@ -96,7 +92,7 @@ class Classifier(object):
             
             t_start_vect = time.time()   
             X_train_tfidf = self._prepare_matrix(X_train)
-            print(str(round(time.time() - t_start_vect, 3)) + "s for Vectorization with " + type(self.count_vect).__name__ + "\n")
+            print(str(round(time.time() - t_start_vect, 3)) + "s for Vectorization with " + type(self.vectorizer).__name__ + "\n")
             
             for m in models:
                 t_start = time.time()
@@ -105,7 +101,11 @@ class Classifier(object):
                 
             self.labels[label] = models
             accuracy = self.get_accuracy(X_test, y_test, label)
-            print(accuracy)
+            
+            print()
+            for k,v in accuracy.items():
+                print(str(k)+" : "+str(v))
+            print("\n#########################################################")
             
             dict1[label] = accuracy
         self.accuracies.append(dict1)
@@ -130,7 +130,7 @@ class Classifier(object):
         name = "modelli_addestrati.pkl"
         print ("saving models...")
         t_start_vect = time.time() 
-        joblib.dump([self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer], self.path + name, compress=3)
+        joblib.dump(self.labels,self.path + name, compress=3)#joblib.dump([self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer], self.path + name, compress=3)
         print(str(round(time.time() - t_start_vect, 3)) + "s for save models")
         print("Done")
         
@@ -140,7 +140,7 @@ class Classifier(object):
         name = "modelli_addestrati.pkl"
         print("loading models...")
         t_start_vect = time.time()
-        self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer = joblib.load(self.path + name)
+        self.labels = joblib.load(self.path + name)#self.labels, self.count_vect, self.count_vect_cat, self.tfidf_transformer = joblib.load(self.path + name)
         print(str(round(time.time() - t_start_vect, 3)) + "s for load models")
         print("Done")
      
@@ -168,22 +168,22 @@ class Classifier(object):
     
     def _prepare_matrix(self, X_train):
         
-        matrix = self.count_vect.fit_transform(X_train)
-        cat_matrix = self.count_vect_cat.fit_transform(X_train)
+        matrix = self.vectorizer.fit_transform(X_train)
+        cat_matrix = self.fvectorizer.fit_transform(X_train)
         combined_matrix = hstack([matrix, cat_matrix], format='csr')
         X_train_counts = combined_matrix
         # tf_transformer = TfidfTransformer(use_idf=False).fit(X_train_counts)
         # X_train_tf = tf_transformer.transform(X_train_counts)
-        X_train_tfidf = self.tfidf_transformer.transform(X_train_counts)
-        return X_train_tfidf
+        #X_train_tfidf = self.tfidf_transformer.transform(X_train_counts)
+        return X_train_counts
 
     def prepare_test_matrix(self, X_test):
-        matrix = self.count_vect.transform(X_test)
-        cat_matrix = self.count_vect_cat.transform(X_test)
+        matrix = self.vectorizer.transform(X_test)
+        cat_matrix = self.fvectorizer.transform(X_test)
         combined_matrix = hstack([matrix, cat_matrix], format='csr')
         X_new_counts = combined_matrix
-        X_new_tfidf = self.tfidf_transformer.transform(X_new_counts)
-        return X_new_tfidf
+        #X_new_tfidf = self.tfidf_transformer.transform(X_new_counts)
+        return X_new_counts
     
     
     
@@ -194,8 +194,14 @@ class ClassifiersGallery(object):
     
     y = []
     
+    vectorizer = None
     
-    def gen_gallery(self, sizes, n_gram=None, hash_features=None):
+    def __init__(self,Vect):
+        self.vectorizer = Vect
+        self.fvectorizer = Vect
+    
+    
+    def gen_gallery(self, sizes):
         
         self.sizes = sizes
         t = time.strftime("%d-%m|%H:%M")
@@ -220,7 +226,7 @@ class ClassifiersGallery(object):
             X, targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
             print('Done')
             
-            classifier.train(X, targets, n_gram=n_gram, hash_features=hash_features)
+            classifier.train(X, targets)
         
         n_gram = classifier.get_n_gram()
         if n_gram != None:

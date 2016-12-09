@@ -8,6 +8,8 @@ Created on 07 ott 2016
 from builtins import IOError
 import traceback
 
+from sklearn.feature_extraction.text import CountVectorizer, HashingVectorizer
+
 from apps.ModelsManager import Classifier
 from utils.DataUtils import DataUtils
 from utils.TextUtils import TextUtils
@@ -17,9 +19,9 @@ fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documen
 del_char = "|"
 limit = 1000000
 fnameNonVisionati = '/home/alejandro/Documenti/NON_VISIONATI.csv'
-campione = 169750
+campione = 100 #169750
 col_desc = 0
-col_cat = ["AREA_INTERVENTO", 'SETTORE_INTERVENTO', 'SOTTOSETTORE_INTERVENTO', 'CATEGORIA_INTERVENTO']
+col_cat = ["AREA_INTERVENTO"]#["AREA_INTERVENTO", 'SETTORE_INTERVENTO', 'SOTTOSETTORE_INTERVENTO', 'CATEGORIA_INTERVENTO']
 n_gram = (1, 2)  # None
 
 data_utils = DataUtils()
@@ -27,9 +29,10 @@ text_utils = TextUtils()
 
 
 
-classifier = Classifier()
+classifier = Classifier(HashingVectorizer(non_negative=True,n_features = 5000, ngram_range=n_gram))
     
 try:
+    raise IOError
     classifier.load()
 except (OSError, IOError) as e:
     
@@ -43,7 +46,7 @@ except (OSError, IOError) as e:
 
     #traceback.print_exc()
     print('models training..')
-    classifier.train(X, cat_targets, n_gram)
+    classifier.train(X, cat_targets)
     classifier.save()
     
 s = input('>>')
