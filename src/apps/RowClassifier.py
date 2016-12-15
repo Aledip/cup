@@ -13,7 +13,7 @@ from sklearn.ensemble.forest import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, HashingVectorizer
 from sklearn.linear_model.passive_aggressive import PassiveAggressiveClassifier
 
-from apps.ModelsManager import Classifier
+from apps.ModelsManager import Classifier, MultiClassifier
 from utils.DataUtils import DataUtils
 from utils.TextUtils import TextUtils
 
@@ -22,7 +22,7 @@ fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documen
 del_char = "|"
 limit = 1000000
 fnameNonVisionati = '/home/alejandro/Documenti/NON_VISIONATI.csv'
-campione = 169750
+campione = 100 #169750
 col_desc = 0
 col_cat = ["AREA_INTERVENTO"]#["AREA_INTERVENTO", 'SETTORE_INTERVENTO', 'SOTTOSETTORE_INTERVENTO', 'CATEGORIA_INTERVENTO']
 n_gram = (1, 2)  # None
@@ -33,7 +33,7 @@ text_utils = TextUtils()
 models = []
 
 models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
-#models.append(RandomForestClassifier(n_jobs=-1))
+models.append(RandomForestClassifier(n_jobs=-1))
 
 #===================================================================
         # if(hash_features != None):
@@ -59,7 +59,7 @@ models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
 
 
 #classifier = Classifier(HashingVectorizer(non_negative=True,n_features = 15000, ngram_range=n_gram),f_select=10000)
-classifier = Classifier(CountVectorizer(ngram_range=n_gram),models,f_select=100000,CV = 10) #fs_features = 95000
+classifier = Classifier(CountVectorizer(ngram_range=n_gram),models) #fs_features = 95000
     
 try:
     raise IOError
@@ -71,27 +71,31 @@ except (OSError, IOError) as e:
     print('Done')
     
     print('sampling data..')
-    X, cat_targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
+    X, targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
     print('Done')
+    for k in targets:
+        print(k)
     
     #cross_validation(classifier, 5, X,cat_targets["AREA_INTERVENTO"] )
     #for cat in col_cat:
     #    cross_validation(classifier, 5, X, cat_targets[cat])
     
-    
+    multiClassifier = MultiClassifier(classifier)
+    multiClassifier.train(X, targets)
     #traceback.print_exc()
-    print('models training..')
-    classifier.train(X, cat_targets["AREA_INTERVENTO"])
-    classifier.save()
+    #classifier.train(X, targets["AREA_INTERVENTO"])
+    #classifier.save()
     
+
+
 s = input('>>')
+
+multiClassifier.classify([s])
 
 #for label in col_cat:
       
 #    print('\nfor ' + label + ' classified like:\n')
 
-for k, v in classifier.classify([s]).items():
-    print(k + " --> " + v)
     
 
 
