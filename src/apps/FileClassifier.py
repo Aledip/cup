@@ -15,6 +15,8 @@ from apps.ModelsManager import Classifier
 from utils.DataUtils import DataUtils
 from utils.TextUtils import TextUtils
 
+import pandas
+
 
 fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
 del_char = "|"
@@ -51,21 +53,50 @@ except (OSError, IOError) as e:
 
 t = time.time() 
 s = ''
+c = 0
 
-with open("/home/alejandro/Scrivania/TOTALE.csv",'r',encoding='latin') as f:
-    for row in f:
-        desc = row.split("|")[1]
-        print(desc)
-        ris = []
-        for col in col_cat:
-            ris.append(classifier.classify(desc, col)['PassiveAggressiveClassifier'])
-        s +=row + "|" + " ".join(ris)
+df = data_utils.csvReader("/home/alejandro/Scrivania/TOTALE.csv", 5, "|")
+dfn = pandas.DataFrame()
+for row in df.iterrows():
+    print(list(row[1]),len(row[1]))
+    dfn.append(row[1])
+print(dfn)
+dfn.to_csv("/home/alejandro/Scrivania/prova2.csv")
+ 
+    
+    
         
-    with open("/home/alejandro/Scrivania/TOTALE_CLF.txt",'w') as f2:
-        f2.write(s)
-        
-        
-print(str(round(time.time() - t, 3)) + "s for classify TOTAL.csv")
+print(df.get_value(3,"AREA_INTERVENTO"))
+clist = df.columns
+print(list(clist))
+print(type(df.loc[3]))
+df.loc[3].to_csv("/home/alejandro/Scrivania/prova.txt",sep ="|",index_label = clist)
+
+
+#-- with open("/home/alejandro/Scrivania/TOTALE.csv",'r',encoding='latin') as f:
+    #---------------------------------------------------------- header = next(f)
+    #------------------------------------------------------------- print(header)
+#------------------------------------------------------------------------------ 
+    #------------------------------------------------------------- for row in f:
+#------------------------------------------------------------------------------ 
+        #--------------------------------------------- rowsplit = row.split("|")
+        #---------------------------------------------------- desc = rowsplit[1]
+#------------------------------------------------------------------------------ 
+        #-------------------------------------------------------------- ris = []
+        #--------------------------------------------------- for col in col_cat:
+            # ris.append(classifier.classify(desc, col)['PassiveAggressiveClassifier'])
+#------------------------------------------------------------------------------ 
+        #----------------------------- s +=row[:-1] + "|" + ",".join(ris) + "\n"
+        #--------------------------------- print(row[:-1] + "|" + ",".join(ris))
+        #------------------------------------------------------------------ c+=1
+        #-------------------------------------------------------------- if c==3:
+            #------------------------------------------------------------- break
+#------------------------------------------------------------------------------ 
+    #---------- with open("/home/alejandro/Scrivania/TOTALE_CLF.txt",'w') as f2:
+        #----------------------------------------------------------- f2.write(s)
+#------------------------------------------------------------------------------ 
+#------------------------------------------------------------------------------ 
+#------------ print(str(round(time.time() - t, 3)) + "s for classify TOTAL.csv")
         
 
 
