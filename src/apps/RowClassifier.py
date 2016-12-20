@@ -22,9 +22,9 @@ fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documen
 del_char = "|"
 limit = 1000000
 fnameNonVisionati = '/home/alejandro/Documenti/NON_VISIONATI.csv'
-campione = 100 #169750
+campione = 169750
 col_desc = 0
-col_cat = ["AREA_INTERVENTO"]#["AREA_INTERVENTO", 'SETTORE_INTERVENTO', 'SOTTOSETTORE_INTERVENTO', 'CATEGORIA_INTERVENTO']
+col_cat = ["AREA_INTERVENTO", "SETTORE_INTERVENTO", "SOTTOSETTORE_INTERVENTO", "CATEGORIA_INTERVENTO"]
 n_gram = (1, 2)  # None
 
 data_utils = DataUtils()
@@ -33,7 +33,7 @@ text_utils = TextUtils()
 models = []
 
 models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
-models.append(RandomForestClassifier(n_jobs=-1))
+#models.append(RandomForestClassifier(n_jobs=-1))
 
 #===================================================================
         # if(hash_features != None):
@@ -59,7 +59,7 @@ models.append(RandomForestClassifier(n_jobs=-1))
 
 
 #classifier = Classifier(HashingVectorizer(non_negative=True,n_features = 15000, ngram_range=n_gram),f_select=10000)
-classifier = Classifier(CountVectorizer(ngram_range=n_gram),models) #fs_features = 95000
+classifier = Classifier(CountVectorizer(ngram_range=n_gram),models,f_select = 150000) #fs_features = 95000
     
 try:
     raise IOError
@@ -73,24 +73,23 @@ except (OSError, IOError) as e:
     print('sampling data..')
     X, targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
     print('Done')
-    for k in targets:
-        print(k)
     
     #cross_validation(classifier, 5, X,cat_targets["AREA_INTERVENTO"] )
     #for cat in col_cat:
     #    cross_validation(classifier, 5, X, cat_targets[cat])
     
-    multiClassifier = MultiClassifier(classifier)
-    multiClassifier.train(X, targets)
+    #multiClassifier = MultiClassifier(classifier)
+    #multiClassifier.train(X, targets)
     #traceback.print_exc()
-    #classifier.train(X, targets["AREA_INTERVENTO"])
-    #classifier.save()
+    classifier.train(X, targets["CATEGORIA_INTERVENTO"])
+    classifier.save()
     
 
 
 s = input('>>')
 
-multiClassifier.classify([s])
+print(classifier.classify([s]))
+#multiClassifier.classify([s])
 
 #for label in col_cat:
       

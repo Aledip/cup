@@ -23,3 +23,5 @@ with open('/home/alejandro/Scrivania/TOTALE.csv','r',encoding = 'latin') as f1:
         
 with open('/home/alejandro/Scrivania/VALIDATI.txt','w') as f2:
     f2.write(c)
+    
+df = pandas.read_csv('/home/alejandro/Scrivania/VALIDATI.csv')

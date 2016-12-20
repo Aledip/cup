@@ -8,13 +8,15 @@ import collections
 
 import pandas as pd
 from utils.TextUtils import TextUtils
+import csv
 
 
 class DataUtils(object):
     
     def csvReader(self,fname,limit,del_char):
         '''leggo il file csv con limite e delimitatore,e lo carico come dataframe'''
-        df = pd.read_csv(fname,nrows=limit,delimiter=del_char,error_bad_lines=False,encoding = "ISO-8859-1")
+        print("stampo fname",fname)
+        df = pd.read_csv(fname,nrows=limit,delimiter=del_char,error_bad_lines=False,encoding = "latin",quoting=csv.QUOTE_NONE,dtype={"PIVA_CODFISCALE_SOG_TITOLARE":str})
         return df
     
     def gen_XandY(self,df,nsample,X_column,y_columns):
@@ -30,6 +32,7 @@ class DataUtils(object):
         y_dict = collections.OrderedDict()
         for y_column in y_columns:
             y_dict[y_column] = sample.loc[:,y_column]
+            
 
         X = TextUtils().norm_str_array(X)
         

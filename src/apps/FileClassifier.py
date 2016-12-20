@@ -9,17 +9,19 @@ import string
 import time
 import traceback
 
+import pandas
 from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.linear_model.passive_aggressive import PassiveAggressiveClassifier
 
 from apps.ModelsManager import Classifier
 from utils.DataUtils import DataUtils
 from utils.TextUtils import TextUtils
 
-import pandas
 
+fname = '/home/alejandro/Scrivania/TOTALE.csv'  # '/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
+#fname = '/home/alejandro/Scrivania/test.csv'  # '/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
 
-fname = '/home/alejandro/Documenti/training_set.csv'  # '/home/alejandro/Documenti/Xand3cat.csv' #/home/alejandro/Documenti/VISIONATI.csv' 
-del_char = "|"
+del_char = '|'
 limit = 1000000
 fnameNonVisionati = '/home/alejandro/Documenti/NON_VISIONATI.csv'
 campione = 100 #169750
@@ -30,47 +32,47 @@ n_gram = (1, 2)  # None
 data_utils = DataUtils()
 text_utils = TextUtils()
 
+models = []
 
-classifier = Classifier(HashingVectorizer(non_negative=True,n_features = 5000, ngram_range=n_gram))
-    
-try:
-    classifier.load()
-except (OSError, IOError) as e:
-    
-    print('loading data..')
-    df = data_utils.csvReader(fname, limit, del_char)
-    print('Done')
-    
-    print('sampling data..')
-    X, cat_targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
-    print('Done')
+models.append(PassiveAggressiveClassifier(n_iter=10, n_jobs=-1))
 
-    #traceback.print_exc()
-    print('models training..')
-    classifier.train(X, cat_targets)
-    classifier.save()
+classifier = Classifier(HashingVectorizer(non_negative=True,n_features = 5000, ngram_range=n_gram),models)
+    
+#-------------------------------------------------------------------------- try:
+    #--------------------------------------------------------- classifier.load()
+#----------------------------------------------- except (OSError, IOError) as e:
+#------------------------------------------------------------------------------ 
+    #--------------------------------------------------- print('loading data..')
+    # df = data_utils.csvReader('/home/alejandro/Scrivania/test.csv', limit, del_char)
+    #------------------------------------------------------------- print('Done')
+#------------------------------------------------------------------------------ 
+    #-------------------------------------------------- print('sampling data..')
+    #---- X, cat_targets = data_utils.gen_XandY(df, campione, col_desc, col_cat)
+    #------------------------------------------------------------- print('Done')
+#------------------------------------------------------------------------------ 
+    #---------------------------------------------------- #traceback.print_exc()
+    #------------------------------------------------ print('models training..')
+    #------------------------------------------ classifier.train(X, cat_targets)
+    #--------------------------------------------------------- classifier.save()
 
 
 t = time.time() 
 s = ''
 c = 0
 
-df = data_utils.csvReader("/home/alejandro/Scrivania/TOTALE.csv", 5, "|")
+df = data_utils.csvReader(fname, 2000000, "|")
+print()
 dfn = pandas.DataFrame()
-for row in df.iterrows():
-    print(list(row[1]),len(row[1]))
-    dfn.append(row[1])
+df = df[df["CONTROLLO_QUALITA"] == "Il corredo informativo di questo CUP è stato visionato, almeno parzialmente"]
+print(len(df))
+print(type(df.iloc[:,17]),df.iloc[:,17])
+
 print(dfn)
 dfn.to_csv("/home/alejandro/Scrivania/prova2.csv")
  
     
-    
-        
-print(df.get_value(3,"AREA_INTERVENTO"))
 clist = df.columns
 print(list(clist))
-print(type(df.loc[3]))
-df.loc[3].to_csv("/home/alejandro/Scrivania/prova.txt",sep ="|",index_label = clist)
 
 
 #-- with open("/home/alejandro/Scrivania/TOTALE.csv",'r',encoding='latin') as f:

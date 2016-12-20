@@ -114,8 +114,7 @@ class Classifier(object):
             
         
         accuracy = self.get_accuracy(X_test, y_test)
-        
-        print()
+
         for k, v in accuracy.items():
             print(str(k) + " : " + str(v))
             
@@ -180,7 +179,6 @@ class Classifier(object):
     def classify(self, X_test):
         clf_res = dict()
         test_matrix = self.prepare_input_matrix(X_test)
-        print(test_matrix.shape)
         for model in self.models:
             clf_res[type(model).__name__] = model.predict(test_matrix)[0]
         return clf_res
@@ -224,14 +222,14 @@ class MultiClassifier(object):
         self.clf = clf
     
     def train(self,X,targets):
-        print(targets.values())
-        for k,v in targets:
+        for k,v in targets.items():
+            print("\n#########################################################\n" + k + "\n")
             self.cat_clf[k] = self.clf.train(X,v)
         
     def classify(self, input):
-        for cat,clf in self.cat_clf:
-            print('\nfor ' + cat + ' classified like:\n')
-            for k, v in clf.classify(input).items():
+        for cat,clf in self.cat_clf.items():
+            print('\nfor ' + cat + ' classified like:\n\n')
+            for k, v in self.clf.classify(input).items():
                 
                 print(k + " --> " + v)
         
